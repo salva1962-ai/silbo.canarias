@@ -158,10 +158,9 @@ const Settings: React.FC = () => {
   }, [updatePreferences])
 
   const handleColorSchemeChange = useCallback((schemeKey: string): void => {
-    if (schemeKey in availableSchemes) {
-      setColorScheme(availableSchemes[schemeKey])
-    }
-  }, [setColorScheme, availableSchemes])
+    const scheme = (availableSchemes as Record<string, typeof colorScheme>)[schemeKey];
+    if (scheme) setColorScheme(scheme);
+  }, [setColorScheme, availableSchemes, colorScheme])
 
   const handleCriticalAlertsToggle = useCallback((value: boolean): void => {
     console.log('Critical alerts:', value)
