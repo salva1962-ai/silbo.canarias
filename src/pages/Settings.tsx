@@ -10,7 +10,6 @@ import {
 import { useTheme } from '../lib/useTheme'
 import { useAppData } from '../lib/useAppData'
 
-// Interfaces para la página de configuración
 interface ColorScheme {
   name: string
   primary: string
@@ -33,7 +32,6 @@ interface ToggleProps {
   icon?: React.ComponentType<{ className?: string }>
 }
 
-// Constantes y helpers fuera del componente
 const COLOR_SCHEME_GRADIENTS = {
   blue: 'from-blue-400 to-cyan-400',
   green: 'from-emerald-400 to-teal-400',
@@ -46,7 +44,7 @@ const getSchemeGradient = (key: string): string => {
 }
 
 const validateEmail = (email: string): boolean => {
-  if (!email) return true // Email vacío es válido
+  if (!email) return true
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
@@ -108,7 +106,7 @@ const Toggle: React.FC<ToggleProps> = ({
               : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
           }`}
           aria-label={`${label}: ${active ? onLabel : offLabel}`}
-          aria-pressed={active ? "true" : "false"}
+          aria-pressed={!!active}
         >
           <span
             className={`absolute left-1 top-1 inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow transition-transform duration-300 ${
@@ -139,22 +137,17 @@ const Toggle: React.FC<ToggleProps> = ({
 const Settings: React.FC = () => {
   const { isDark, toggle, colorScheme, setColorScheme, availableSchemes } = useTheme()
   const { preferences, updatePreferences } = useAppData()
-  
-  // Estados locales para validación
   const [emailError, setEmailError] = useState<string>('')
 
   const handlePrivacyEmailChange = useCallback((
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     const email = event.target.value.trim()
-    
-    // Validar email
     if (email && !validateEmail(email)) {
       setEmailError('Formato de email inválido')
     } else {
       setEmailError('')
     }
-    
     updatePreferences({
       privacyEmail: email
     })
@@ -166,17 +159,15 @@ const Settings: React.FC = () => {
 
   const handleColorSchemeChange = useCallback((schemeKey: string): void => {
     if (schemeKey in availableSchemes) {
-      setColorScheme(schemeKey)
+      setColorScheme(availableSchemes[schemeKey])
     }
   }, [setColorScheme, availableSchemes])
 
   const handleCriticalAlertsToggle = useCallback((value: boolean): void => {
-    // Funcionalidad futura - placeholder
     console.log('Critical alerts:', value)
   }, [])
 
   const handleDailySummaryToggle = useCallback((value: boolean): void => {
-    // Funcionalidad futura - placeholder
     console.log('Daily summary:', value)
   }, [])
 
@@ -230,7 +221,7 @@ const Settings: React.FC = () => {
                     ${colorScheme === key 
                       ? 'border-pastel-indigo bg-pastel-indigo/10 scale-105' 
                       : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-pastel-indigo/50'}`}
-                  aria-pressed={colorScheme === key ? "true" : "false"}
+                  aria-pressed={!!(colorScheme === key)}
                   aria-label={`Seleccionar esquema de color ${scheme.name}`}
                 >
                   <span className={`w-8 h-8 rounded-full mb-2 border-2 flex items-center justify-center transition-all duration-300 bg-gradient-to-r ${getSchemeGradient(key)}
@@ -300,7 +291,7 @@ const Settings: React.FC = () => {
                   }`}
                   placeholder="dpd@silbocanarias.com"
                   aria-label="Correo electrónico de privacidad"
-                  aria-invalid={emailError ? "true" : "false"}
+                  aria-invalid={!!emailError}
                   aria-describedby={emailError ? 'email-error' : 'email-help'}
                 />
                 {emailError && (
