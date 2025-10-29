@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAppData } from '../../lib/useAppData';
 import { 
   BellIcon, 
   CogIcon, 
@@ -12,29 +13,18 @@ import { useTheme } from '../../lib/useTheme';
 import Button from '../ui/Button';
 
 // Interfaces para tipos de datos
-interface Notification {
-  id: number;
-  title: string;
-  description: string;
-  time: string;
-  unread: boolean;
-}
+import type { Notification } from '../../lib/types';
 
 const Header: React.FC = () => {
   const { isDark, toggle } = useTheme();
   const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   
-  const notifications: Notification[] = [
-    { id: 1, title: 'Nueva venta registrada', description: 'LWMY001 - Lowi Residencial', time: '2h', unread: true },
-    { id: 2, title: 'Visita programada', description: 'Candidato en Las Palmas', time: '4h', unread: true },
-    { id: 3, title: 'Distribuidor activado', description: 'ESPSB002 ya está operativo', time: '1d', unread: false }
-  ];
-  
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const { notifications } = useAppData();
+  const unreadCount = notifications.filter(n => n.read === false).length;
   
   return (
-    <header className={`border-b backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ${
+    <header className={`border-b backdrop-blur-sm sticky top-0 z-50 transition-all duration-700 animate-fade-in ${
       isDark
         ? 'bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95 border-slate-700/50'
         : 'bg-gradient-to-r from-white via-pastel-indigo/5 to-pastel-cyan/10 border-gray-200/50'
@@ -148,7 +138,7 @@ const Header: React.FC = () => {
                         <div
                           key={notification.id}
                           className={`p-3 rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer ${
-                            notification.unread
+                            notification.read === false
                               ? isDark
                                 ? 'bg-slate-700/50 border border-slate-600/30'
                                 : 'bg-pastel-indigo/5 border border-pastel-indigo/20'
@@ -159,12 +149,12 @@ const Header: React.FC = () => {
                         >
                           <div className="flex items-start space-x-3">
                             <div className={`p-1.5 rounded-lg ${
-                              notification.unread
+                              notification.read === false
                                 ? 'bg-pastel-indigo/20'
                                 : isDark ? 'bg-slate-600/30' : 'bg-gray-200/50'
                             }`}>
                               <SparklesIcon className={`h-4 w-4 ${
-                                notification.unread
+                                notification.read === false
                                   ? 'text-pastel-indigo'
                                   : isDark ? 'text-slate-400' : 'text-gray-500'
                               }`} />
@@ -179,7 +169,7 @@ const Header: React.FC = () => {
                                 <span className={`text-xs transition-colors duration-500 ${
                                   isDark ? 'text-slate-400' : 'text-gray-500'
                                 }`}>
-                                  {notification.time}
+                                  {notification.timestamp}
                                 </span>
                               </div>
                               <p className={`text-sm truncate transition-colors duration-500 ${

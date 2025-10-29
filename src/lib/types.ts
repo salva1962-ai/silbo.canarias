@@ -43,7 +43,18 @@ export interface PriorityDrivers {
   updatedAt: string
 }
 
-// Entidades base
+
+// Notificaciones globales
+export interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  timestamp?: string;
+  read?: boolean;
+  color?: string;
+}
+
 export type ActivityType = 'sale' | 'visit' | 'call' | 'task' | 'information';
 export type Priority = 'high' | 'medium' | 'low';
 export interface Activity {
@@ -332,61 +343,63 @@ export interface CallCenterSummary {
 
 // Contexto global expuesto por el proveedor
 export interface AppContextType {
-  users: User[]
-  currentUser: User | null
-  currentUserId: EntityId | null
-  preferences: Preferences
-  distributors: Distributor[]
-  candidates: Candidate[]
-  visits: Visit[]
-  sales: Sale[]
-  lookups: Lookups
+  users: User[];
+  currentUser: User | null;
+  currentUserId: EntityId | null;
+  preferences: Preferences;
+  distributors: Distributor[];
+  candidates: Candidate[];
+  visits: Visit[];
+  sales: Sale[];
+  lookups: Lookups;
   formatters: {
-    daysDifference: (isoDate: string) => number
-    formatRelativeTime: (isoDate: string) => string
-    relative: (isoDate: string) => string
-  }
+    daysDifference: (isoDate: string) => number;
+    formatRelativeTime: (isoDate: string) => string;
+    relative: (isoDate: string) => string;
+  };
   taxonomy: {
-    rules: unknown
-    resolveCategory: (code: string | null | undefined) => Category
+    rules: unknown;
+    resolveCategory: (code: string | null | undefined) => Category;
     deriveBrandsForChannel: (
       brands: string[],
       channelType: ChannelType,
       category: Category
-    ) => string[]
-  }
-  pipelineStages: PipelineStage[]
-  brandOptions: LookupOption[]
-  channelOptions: LookupOption[]
-  statusOptions: LookupOption[]
-  provinceOptions: LookupOption[]
-  stats: StatsSummary
-  callCenter: CallCenterSummary
-  validators: Record<string, unknown>
-  addUser: (payload: NewUser) => User
-  updateUser: (id: EntityId, updates: UserUpdates) => void
-  removeUser: (id: EntityId) => void
-  setCurrentUser: (id: EntityId) => void
-  updatePreferences: (updates: PreferencesUpdates) => void
-  addDistributor: (payload: NewDistributor) => Distributor
-  updateDistributor: (id: EntityId, updates: DistributorUpdates) => void
-  deleteDistributor: (id: EntityId) => void
-  addCandidate: (payload: NewCandidate) => Candidate
-  updateCandidate: (id: EntityId, updates: CandidateUpdates) => void
-  deleteCandidate: (id: EntityId) => void
-  removeCandidate: (id: EntityId) => void
-  moveCandidate: (id: EntityId, newStage: PipelineStageId) => void
+    ) => string[];
+  };
+  pipelineStages: PipelineStage[];
+  brandOptions: LookupOption[];
+  channelOptions: LookupOption[];
+  statusOptions: LookupOption[];
+  provinceOptions: LookupOption[];
+  stats: StatsSummary;
+  callCenter: CallCenterSummary;
+  validators: Record<string, unknown>;
+  notifications: Notification[];
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  addUser: (payload: NewUser) => User;
+  updateUser: (id: EntityId, updates: UserUpdates) => void;
+  removeUser: (id: EntityId) => void;
+  setCurrentUser: (id: EntityId) => void;
+  updatePreferences: (updates: PreferencesUpdates) => void;
+  addDistributor: (payload: NewDistributor) => Distributor;
+  updateDistributor: (id: EntityId, updates: DistributorUpdates) => void;
+  deleteDistributor: (id: EntityId) => void;
+  addCandidate: (payload: NewCandidate) => Candidate;
+  updateCandidate: (id: EntityId, updates: CandidateUpdates) => void;
+  deleteCandidate: (id: EntityId) => void;
+  removeCandidate: (id: EntityId) => void;
+  moveCandidate: (id: EntityId, newStage: PipelineStageId) => void;
   reorderCandidate?: (
     id: EntityId,
     newStage: PipelineStageId,
     newPosition: number
-  ) => void
-  addVisit: (payload: NewVisit) => Visit
-  updateVisit: (id: EntityId, updates: VisitUpdates) => void
-  deleteVisit: (id: EntityId) => void
-  addSale: (payload: NewSale) => Sale
-  updateSale: (id: EntityId, updates: SaleUpdates) => void
-  deleteSale: (id: EntityId) => void
+  ) => void;
+  addVisit: (payload: NewVisit) => Visit;
+  updateVisit: (id: EntityId, updates: VisitUpdates) => void;
+  deleteVisit: (id: EntityId) => void;
+  addSale: (payload: NewSale) => Sale;
+  updateSale: (id: EntityId, updates: SaleUpdates) => void;
+  deleteSale: (id: EntityId) => void;
 }
 
 export type NewUser = Partial<User>

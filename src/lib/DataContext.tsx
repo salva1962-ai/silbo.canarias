@@ -1,3 +1,4 @@
+// ...existing code...
 import React, { useCallback, useEffect, useMemo, useState, ReactNode } from 'react';
 import { supabase } from './supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -99,6 +100,8 @@ interface DataProviderProps {
 }
 
 export function DataProvider({ children }: DataProviderProps) {
+  // Estado global de notificaciones
+  const [notifications, setNotifications] = useState<import('./types').Notification[]>([]);
   // Reordenar candidato en el pipeline (drag & drop Kanban) con validaciones robustas
   const reorderCandidate = useCallback(
     (id: EntityId, newStage: PipelineStageId, newPosition: number) => {
@@ -845,6 +848,8 @@ export function DataProvider({ children }: DataProviderProps) {
     stats,
     callCenter: followUp,
   validators: {},
+  notifications,
+  setNotifications,
     addUser,
     updateUser: updateUserProfile,
   removeUser,

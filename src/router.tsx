@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from './Layout'
 import DataProviderWrapper from './DataProviderWrapper'
-import TestColors from './TestColors'
 import Dashboard from './pages/Dashboard'
 import Kanban from './pages/Kanban'
 import Distributors from './pages/Distributors'
@@ -37,7 +36,6 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <Dashboard /> },
               { path: 'dashboard', element: <Dashboard /> },
-              { path: 'test', element: <TestColors /> },
               { path: 'pipeline', element: <Kanban /> },
               { path: 'distributors', element: <Distributors /> },
               { path: 'distributors/:id', element: <DistributorDetail /> },

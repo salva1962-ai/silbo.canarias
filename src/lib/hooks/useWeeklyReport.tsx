@@ -101,61 +101,10 @@ export const useWeeklyReport = () => {
     [captureChart]
   )
 
-  /**
-   * Genera datos de ejemplo para el reporte (útil para testing)
-   */
-  const generateSampleData = useCallback((): WeeklyReportData => {
-    const week = '41'
-    const year = new Date().getFullYear()
-
-    return {
-      week,
-      dateRange: `9 - 15 Octubre ${year}`,
-      generatedAt: new Date().toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      kpis: {
-        totalSales: 245,
-        totalVisits: 38,
-        activeDistributors: 42,
-        newCandidates: 7,
-        conversionRate: 16.7,
-        avgResponseTime: '2.4 días'
-      },
-      salesByBrand: [
-        { brand: 'Silbö', operations: 128, percentage: 52.2 },
-        { brand: 'Lowi', operations: 78, percentage: 31.8 },
-        { brand: 'Vodafone', operations: 39, percentage: 15.9 }
-      ],
-      topPerformers: [
-        { name: 'Distribuidor Las Palmas Centro', operations: 45, rank: 1 },
-        { name: 'Distribuidor Tenerife Sur', operations: 38, rank: 2 },
-        { name: 'Distribuidor La Laguna', operations: 32, rank: 3 },
-        { name: 'Distribuidor Telde', operations: 28, rank: 4 },
-        { name: 'Distribuidor Arona', operations: 24, rank: 5 },
-        { name: 'Distribuidor Puerto del Rosario', operations: 21, rank: 6 },
-        { name: 'Distribuidor Arrecife', operations: 18, rank: 7 },
-        { name: 'Distribuidor Santa Cruz Norte', operations: 15, rank: 8 },
-        { name: 'Distribuidor Maspalomas', operations: 13, rank: 9 },
-        { name: 'Distribuidor Costa Teguise', operations: 11, rank: 10 }
-      ],
-      highlights: [
-        'Incremento del 12.5% en ventas respecto a la semana anterior',
-        'Silbö mantiene el liderazgo con 52.2% de las operaciones',
-        '7 nuevos candidatos captados en el pipeline',
-        'Tasa de conversión se mantiene estable en 16.7%'
-      ]
-    }
-  }, [])
 
   return {
     generateWeeklyPDF,
-    captureChart,
-    generateSampleData
+    captureChart
   }
 }
 

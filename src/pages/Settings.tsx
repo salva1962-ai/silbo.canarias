@@ -119,16 +119,9 @@ const Toggle: React.FC<ToggleProps> = ({
 }
 
 const Settings: React.FC = () => {
-  const { isDark, toggle, colorScheme } = useTheme()
+  const { isDark, toggle, colorScheme, setColorScheme, availableSchemes } = useTheme()
   const { preferences, updatePreferences } = useAppData()
 
-  // Mock data para esquemas de colores hasta que esté implementado
-  const availableSchemes: Record<string, ColorScheme> = {
-    blue: { name: 'Azul', primary: 'azul' },
-    green: { name: 'Verde', primary: 'verde' },
-    purple: { name: 'Púrpura', primary: 'púrpura' },
-    orange: { name: 'Naranja', primary: 'naranja' }
-  }
 
   const handlePrivacyEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -142,9 +135,8 @@ const Settings: React.FC = () => {
     updatePreferences({ allowDataExports: value })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleColorSchemeChange = (schemeKey: string): void => {
-    // setColorScheme(schemeKey); // Deshabilitado hasta implementación completa
+    setColorScheme(schemeKey as any)
   }
 
   const getSchemeGradient = (key: string): string => {
@@ -195,49 +187,33 @@ const Settings: React.FC = () => {
             icon={MoonIcon}
           />
 
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-pastel-indigo/10 to-pastel-cyan/10">
-                <SparklesIcon className="h-5 w-5 text-pastel-indigo" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">
-                  Esquema de colores
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Elige la paleta que mejor se adapte a tu estilo
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {Object.entries(availableSchemes).map(
-                ([key, scheme]: [string, ColorScheme]) => (
-                  <button
-                    key={key}
-                    onClick={() => handleColorSchemeChange(key)}
-                    className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
-                      colorScheme === key
-                        ? 'border-pastel-indigo bg-pastel-indigo/10 shadow-lg'
-                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:bg-gray-700'
-                    }`}
-                    aria-label={`Seleccionar esquema de colores ${scheme.name}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-6 h-6 rounded-full bg-gradient-to-r ${getSchemeGradient(key)}`}
-                      ></div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-gray-900">
-                          {scheme.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                          {scheme.primary}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                )
-              )}
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold mb-2 text-gray-800 dark:text-gray-200">Esquema de colores</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(availableSchemes).map(([key, scheme]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleColorSchemeChange(key)}
+                  className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-pastel-indigo/30 relative overflow-hidden
+                    ${colorScheme === key ? 'border-pastel-indigo bg-pastel-indigo/10 animate-bounce-gentle' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`}
+                  aria-pressed={colorScheme === key}
+                >
+                  <span className={`w-8 h-8 rounded-full mb-2 border-2 ${colorScheme === key ? 'border-pastel-indigo' : 'border-gray-300'} flex items-center justify-center transition-all duration-300 ` +
+                    (key === 'blue' ? 'bg-gradient-to-r from-blue-400 to-cyan-400' :
+                     key === 'green' ? 'bg-gradient-to-r from-emerald-400 to-teal-400' :
+                     key === 'purple' ? 'bg-gradient-to-r from-purple-400 to-violet-400' :
+                     key === 'orange' ? 'bg-gradient-to-r from-orange-400 to-amber-400' :
+                     '')}>
+                    {colorScheme === key && (
+                      <svg className="w-5 h-5 text-pastel-indigo animate-fade-in" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">{scheme.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         </Section>

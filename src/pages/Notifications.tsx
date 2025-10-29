@@ -8,6 +8,7 @@ interface Notification {
   color?: string
 }
 import React, { useState } from 'react'
+import { useAppData } from '../lib/useAppData'
 import {
   BellIcon,
   CalendarIcon,
@@ -21,7 +22,7 @@ import {
 
 // Componente Notifications limpio y funcional
 const Notifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([])
+  const { notifications, setNotifications } = useAppData()
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
 
   const unreadCount = notifications.filter((n) => n.read === false).length
