@@ -394,7 +394,7 @@ const SortableCandidateCard: React.FC<SortableCandidateCardProps> = ({
   return (
   // Estilo inline requerido por @dnd-kit/core para drag & drop. No mover a CSS externo.
   // Documentado en docs/CSS_INLINE_STYLES.md
-  <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+  <div ref={setNodeRef} className="kanban-draggable" {...attributes} {...listeners}>
       <CandidateCard
         candidate={candidate}
         pipelineStages={pipelineStages}
