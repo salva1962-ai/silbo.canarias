@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   SunIcon,
   MoonIcon,
@@ -33,6 +33,24 @@ interface ToggleProps {
   icon?: React.ComponentType<{ className?: string }>
 }
 
+// Constantes y helpers fuera del componente
+const COLOR_SCHEME_GRADIENTS = {
+  blue: 'from-blue-400 to-cyan-400',
+  green: 'from-emerald-400 to-teal-400',
+  purple: 'from-purple-400 to-violet-400',
+  orange: 'from-orange-400 to-amber-400'
+} as const
+
+const getSchemeGradient = (key: string): string => {
+  return COLOR_SCHEME_GRADIENTS[key as keyof typeof COLOR_SCHEME_GRADIENTS] || COLOR_SCHEME_GRADIENTS.orange
+}
+
+const validateEmail = (email: string): boolean => {
+  if (!email) return true // Email vacío es válido
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 const Section: React.FC<SectionProps> = ({
   title,
   description,
@@ -47,7 +65,7 @@ const Section: React.FC<SectionProps> = ({
         </span>
       ) : null}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
         {description ? (
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {description}
@@ -70,30 +88,30 @@ const Toggle: React.FC<ToggleProps> = ({
 }) => {
   const Icon = icon
 
-  const handleToggle = (): void => {
+  const handleToggle = useCallback((): void => {
     onChange(!active)
-  }
+  }, [active, onChange])
 
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/70 p-4 text-sm text-gray-600 dark:text-gray-400">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {Icon ? <Icon className="h-5 w-5 text-pastel-indigo" /> : null}
-          <p className="text-sm font-semibold text-gray-800">{label}</p>
+          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{label}</p>
         </div>
         <button
           type="button"
           onClick={handleToggle}
-          className={`relative inline-flex h-8 w-16 items-center rounded-full border transition ${
+          className={`relative inline-flex h-8 w-16 items-center rounded-full border transition-all duration-300 ${
             active
               ? 'border-pastel-indigo bg-gradient-to-r from-pastel-indigo to-pastel-cyan'
               : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
           }`}
           aria-label={`${label}: ${active ? onLabel : offLabel}`}
-          {...(active && { 'aria-pressed': 'true' })}
+          aria-pressed={active ? "true" : "false"}
         >
           <span
-            className={`absolute left-1 top-1 inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow transition ${
+            className={`absolute left-1 top-1 inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow transition-transform duration-300 ${
               active ? 'translate-x-8' : 'translate-x-0'
             }`}
           >
@@ -121,36 +139,46 @@ const Toggle: React.FC<ToggleProps> = ({
 const Settings: React.FC = () => {
   const { isDark, toggle, colorScheme, setColorScheme, availableSchemes } = useTheme()
   const { preferences, updatePreferences } = useAppData()
+  
+  // Estados locales para validación
+  const [emailError, setEmailError] = useState<string>('')
 
-
-  const handlePrivacyEmailChange = (
+  const handlePrivacyEmailChange = useCallback((
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    updatePreferences({
-      privacyEmail: event.target.value
-    })
-  }
-
-  const handleDataExportToggle = (value: boolean): void => {
-    updatePreferences({ allowDataExports: value })
-  }
-
-  const handleColorSchemeChange = (schemeKey: string): void => {
-    setColorScheme(schemeKey as any)
-  }
-
-  const getSchemeGradient = (key: string): string => {
-    switch (key) {
-      case 'blue':
-        return 'from-blue-400 to-cyan-400'
-      case 'green':
-        return 'from-emerald-400 to-teal-400'
-      case 'purple':
-        return 'from-purple-400 to-violet-400'
-      default:
-        return 'from-orange-400 to-amber-400'
+    const email = event.target.value.trim()
+    
+    // Validar email
+    if (email && !validateEmail(email)) {
+      setEmailError('Formato de email inválido')
+    } else {
+      setEmailError('')
     }
-  }
+    
+    updatePreferences({
+      privacyEmail: email
+    })
+  }, [updatePreferences])
+
+  const handleDataExportToggle = useCallback((value: boolean): void => {
+    updatePreferences({ allowDataExports: value })
+  }, [updatePreferences])
+
+  const handleColorSchemeChange = useCallback((schemeKey: string): void => {
+    if (schemeKey in availableSchemes) {
+      setColorScheme(schemeKey)
+    }
+  }, [setColorScheme, availableSchemes])
+
+  const handleCriticalAlertsToggle = useCallback((value: boolean): void => {
+    // Funcionalidad futura - placeholder
+    console.log('Critical alerts:', value)
+  }, [])
+
+  const handleDailySummaryToggle = useCallback((value: boolean): void => {
+    // Funcionalidad futura - placeholder
+    console.log('Daily summary:', value)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-pastel-indigo/10 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -188,30 +216,37 @@ const Settings: React.FC = () => {
           />
 
           <div className="mt-6">
-            <h3 className="text-sm font-semibold mb-2 text-gray-800 dark:text-gray-200">Esquema de colores</h3>
+            <h3 className="text-sm font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+              <SparklesIcon className="h-4 w-4 text-pastel-indigo" />
+              Esquema de colores
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Object.entries(availableSchemes).map(([key, scheme]) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => handleColorSchemeChange(key)}
-                  className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-pastel-indigo/30 relative overflow-hidden
-                    ${colorScheme === key ? 'border-pastel-indigo bg-pastel-indigo/10 animate-bounce-gentle' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`}
-                  aria-pressed={colorScheme === key}
+                  className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-pastel-indigo/50 relative overflow-hidden
+                    ${colorScheme === key 
+                      ? 'border-pastel-indigo bg-pastel-indigo/10 scale-105' 
+                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-pastel-indigo/50'}`}
+                  aria-pressed={colorScheme === key ? "true" : "false"}
+                  aria-label={`Seleccionar esquema de color ${scheme.name}`}
                 >
-                  <span className={`w-8 h-8 rounded-full mb-2 border-2 ${colorScheme === key ? 'border-pastel-indigo' : 'border-gray-300'} flex items-center justify-center transition-all duration-300 ` +
-                    (key === 'blue' ? 'bg-gradient-to-r from-blue-400 to-cyan-400' :
-                     key === 'green' ? 'bg-gradient-to-r from-emerald-400 to-teal-400' :
-                     key === 'purple' ? 'bg-gradient-to-r from-purple-400 to-violet-400' :
-                     key === 'orange' ? 'bg-gradient-to-r from-orange-400 to-amber-400' :
-                     '')}>
+                  <span className={`w-8 h-8 rounded-full mb-2 border-2 flex items-center justify-center transition-all duration-300 bg-gradient-to-r ${getSchemeGradient(key)}
+                    ${colorScheme === key ? 'border-pastel-indigo scale-110' : 'border-gray-300 dark:border-gray-600 group-hover:border-pastel-indigo/50'}`}>
                     {colorScheme === key && (
-                      <svg className="w-5 h-5 text-pastel-indigo animate-fade-in" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-white animate-fade-in" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </span>
-                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">{scheme.name}</span>
+                  <span className={`text-xs font-semibold transition-colors ${colorScheme === key ? 'text-pastel-indigo' : 'text-gray-700 dark:text-gray-200'}`}>
+                    {scheme.name}
+                  </span>
+                  {colorScheme === key && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-pastel-indigo/5 to-pastel-cyan/5 rounded-2xl" />
+                  )}
                 </button>
               ))}
             </div>
@@ -227,7 +262,7 @@ const Settings: React.FC = () => {
             label="Alertas críticas"
             description="Recibe avisos instantáneos cuando haya tareas críticas pendientes o incidencias en checklists."
             active={true}
-            onChange={() => {}}
+            onChange={handleCriticalAlertsToggle}
             onLabel="Avisos activos"
             offLabel="Avisos desactivados"
             icon={BellIcon}
@@ -236,7 +271,7 @@ const Settings: React.FC = () => {
             label="Resumen diario"
             description="Envío diario con el snapshot de visitas, ventas y pendientes. Disponible próximamente."
             active={false}
-            onChange={() => {}}
+            onChange={handleDailySummaryToggle}
             onLabel="Programado"
             offLabel="No programado"
             icon={ArrowPathIcon}
@@ -249,23 +284,44 @@ const Settings: React.FC = () => {
           icon={ShieldCheckIcon}
         >
           <div className="space-y-4">
-            <label className="flex flex-col gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-widest text-gray-400">
                 Correo de privacidad
-              </span>
-              <input
-                type="email"
-                value={preferences.privacyEmail}
-                onChange={handlePrivacyEmailChange}
-                className="rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 shadow-sm focus:border-pastel-indigo focus:outline-none focus:ring-2 focus:ring-pastel-indigo/30"
-                placeholder="dpd@silbocanarias.com"
-                aria-label="Correo electrónico de privacidad"
-              />
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Usaremos este contacto para solicitudes de acceso, rectificación
-                o borrado. Debe pertenecer al Delegado de Protección de Datos.
-              </span>
-            </label>
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={preferences.privacyEmail}
+                  onChange={handlePrivacyEmailChange}
+                  className={`w-full rounded-2xl border px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pastel-indigo/50 ${
+                    emailError
+                      ? 'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 focus:border-red-500'
+                      : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:border-pastel-indigo'
+                  }`}
+                  placeholder="dpd@silbocanarias.com"
+                  aria-label="Correo electrónico de privacidad"
+                  aria-invalid={emailError ? "true" : "false"}
+                  aria-describedby={emailError ? 'email-error' : 'email-help'}
+                />
+                {emailError && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              {emailError ? (
+                <span id="email-error" className="text-xs text-red-600 dark:text-red-400 font-medium">
+                  {emailError}
+                </span>
+              ) : (
+                <span id="email-help" className="text-xs text-gray-500 dark:text-gray-400">
+                  Usaremos este contacto para solicitudes de acceso, rectificación
+                  o borrado. Debe pertenecer al Delegado de Protección de Datos.
+                </span>
+              )}
+            </div>
 
             <Toggle
               label="Permitir exportación de datos"
@@ -277,16 +333,22 @@ const Settings: React.FC = () => {
               icon={ShieldCheckIcon}
             />
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/80 p-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-600 bg-gradient-to-r from-gray-50 to-blue-50/50 dark:from-gray-700/80 dark:to-blue-900/20 p-4 text-sm text-gray-600 dark:text-gray-400">
               <p>
                 Puedes solicitar una exportación de tus datos o revocar permisos
                 de acceso escribiendo a
-                <a
-                  href={`mailto:${preferences.privacyEmail}`}
-                  className="ml-1 font-semibold text-pastel-indigo hover:underline"
-                >
-                  {preferences.privacyEmail}
-                </a>
+                {preferences.privacyEmail ? (
+                  <a
+                    href={`mailto:${preferences.privacyEmail}`}
+                    className="ml-1 font-semibold text-pastel-indigo hover:text-pastel-indigo/80 transition-colors duration-200 underline decoration-dotted underline-offset-2"
+                  >
+                    {preferences.privacyEmail}
+                  </a>
+                ) : (
+                  <span className="ml-1 font-semibold text-gray-400">
+                    [configurar email arriba]
+                  </span>
+                )}
                 .
               </p>
               <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
