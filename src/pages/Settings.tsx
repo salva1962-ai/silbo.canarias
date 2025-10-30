@@ -159,7 +159,7 @@ const Settings: React.FC = () => {
 
   const handleColorSchemeChange = useCallback((schemeKey: string): void => {
     const scheme = (availableSchemes as Record<string, typeof colorScheme>)[schemeKey];
-    if (scheme) setColorScheme(scheme);
+    if (scheme) setColorScheme(scheme)git add src/pages/Settings.tsx;
   }, [setColorScheme, availableSchemes, colorScheme])
 
   const handleCriticalAlertsToggle = useCallback((value: boolean): void => {

@@ -223,7 +223,7 @@ const ContactSelectorModal: React.FC<ContactSelectorModalProps> = ({
                   }`}
                   role="tab"
                   aria-controls={`panel-${id}`}
-                  {...(isActive && { 'aria-selected': 'true' })}
+                  aria-selected={!!isActive}
                 >
                   <IconComponent className="h-4 w-4" />
                   {label}

@@ -1,10 +1,9 @@
+echo "husky - DEPRECATED
+
+Please remove the following two lines from $0:
+
 #!/usr/bin/env sh
-if [ -n "$HUSKY_DEBUG" ]; then
-  set -x
-fi
+. \"\$(dirname -- \"\$0\")/_/husky.sh\"
 
-export PATH="$(dirname -- "$0")/../../node_modules/.bin:$PATH"
-
-if [ -f ~/.huskyrc ]; then
-  . ~/.huskyrc
-fi
+They WILL FAIL in v10.0.0
+"
