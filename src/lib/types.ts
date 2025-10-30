@@ -376,30 +376,36 @@ export interface AppContextType {
   validators: Record<string, unknown>;
   notifications: Notification[];
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  // ✅ SISTEMA OFFLINE/ONLINE - NUEVAS PROPIEDADES
+  syncStatus: SyncStatus;
+  forceSync: () => Promise<void>;
+  isOnline: boolean;
+  isSyncing: boolean;
+  pendingSync: number;
   addUser: (payload: NewUser) => User;
   updateUser: (id: EntityId, updates: UserUpdates) => void;
   removeUser: (id: EntityId) => void;
   setCurrentUser: (id: EntityId) => void;
   updatePreferences: (updates: PreferencesUpdates) => void;
-  addDistributor: (payload: NewDistributor) => Distributor;
-  updateDistributor: (id: EntityId, updates: DistributorUpdates) => void;
-  deleteDistributor: (id: EntityId) => void;
-  addCandidate: (payload: NewCandidate) => Candidate;
-  updateCandidate: (id: EntityId, updates: CandidateUpdates) => void;
-  deleteCandidate: (id: EntityId) => void;
+  addDistributor: (payload: NewDistributor) => Promise<Distributor>;
+  updateDistributor: (id: EntityId, updates: DistributorUpdates) => Promise<void>;
+  deleteDistributor: (id: EntityId) => Promise<void>;
+  addCandidate: (payload: NewCandidate) => Promise<Candidate>;
+  updateCandidate: (id: EntityId, updates: CandidateUpdates) => Promise<void>;
+  deleteCandidate: (id: EntityId) => Promise<void>;
   removeCandidate: (id: EntityId) => void;
-  moveCandidate: (id: EntityId, newStage: PipelineStageId) => void;
+  moveCandidate: (id: EntityId, newStage: PipelineStageId) => Promise<void>;
   reorderCandidate?: (
     id: EntityId,
     newStage: PipelineStageId,
     newPosition: number
-  ) => void;
-  addVisit: (payload: NewVisit) => Visit;
-  updateVisit: (id: EntityId, updates: VisitUpdates) => void;
-  deleteVisit: (id: EntityId) => void;
-  addSale: (payload: NewSale) => Sale;
-  updateSale: (id: EntityId, updates: SaleUpdates) => void;
-  deleteSale: (id: EntityId) => void;
+  ) => Promise<void>;
+  addVisit: (payload: NewVisit) => Promise<Visit>;
+  updateVisit: (id: EntityId, updates: VisitUpdates) => Promise<void>;
+  deleteVisit: (id: EntityId) => Promise<void>;
+  addSale: (payload: NewSale) => Promise<Sale>;
+  updateSale: (id: EntityId, updates: SaleUpdates) => Promise<void>;
+  deleteSale: (id: EntityId) => Promise<void>;
 }
 
 export type NewUser = Partial<User>
@@ -413,3 +419,39 @@ export type NewVisit = Partial<Visit>
 export type VisitUpdates = Partial<Visit>
 export type NewSale = Partial<Sale>
 export type SaleUpdates = Partial<Sale>
+
+// ✅ TIPOS PARA SISTEMA OFFLINE/ONLINE
+export interface SyncOperation {
+  id: string
+  type: 'create' | 'update' | 'delete'
+  table: 'distributors' | 'candidates' | 'visits' | 'sales'
+  data: any
+  timestamp: string
+}
+
+export interface SyncStatus {
+  isOnline: boolean
+  isSyncing: boolean
+  pendingOperations: number
+  lastSync: string | null
+  queueSize: number
+}
+
+// ✅ HOOKS PARA SISTEMA OFFLINE/ONLINE
+export interface UseSyncStatusReturn {
+  syncStatus: SyncStatus
+  forceSync: () => Promise<void>
+  isOnline: boolean
+  isSyncing: boolean
+  pendingSync: number
+  notifications: Notification[]
+}
+
+export interface UseNotificationsReturn {
+  notifications: Notification[]
+  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => string
+  removeNotification: (id: string) => void
+  markAsRead: (id: string) => void
+  clearAll: () => void
+  unreadCount: number
+}
