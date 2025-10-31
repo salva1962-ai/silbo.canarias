@@ -29,7 +29,7 @@ import {
   downloadCandidateTemplate,
   exportCandidates,
   importCandidatesWithUpdate
-} from '../utils/excel'
+} from '../lib/utils/excel'
 
 interface StageLookup {
   [key: string]: PipelineStage

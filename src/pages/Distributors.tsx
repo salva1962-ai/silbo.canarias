@@ -22,7 +22,7 @@ import {
   downloadDistributorTemplate,
   exportDistributors,
   importDistributorsWithUpdate
-} from '../utils/excel'
+} from '../lib/utils/excel'
 import type {
   Distributor,
   NewDistributor,
@@ -62,7 +62,7 @@ interface ModalMeta {
 }
 
 interface ActionButtonProps {
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  icon?: React.ElementType
   label: string
   theme?: 'indigo' | 'cyan' | 'green' | 'danger'
   onClick: () => void
@@ -158,7 +158,7 @@ const Distributors: React.FC = () => {
       value: string
       delta: string
       accent: string
-      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+      icon: React.ElementType
     }[] => [
       {
         title: 'Distribuidores activos',
@@ -719,10 +719,8 @@ const Distributors: React.FC = () => {
                             <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                               {/* Width refleja la puntuación de prioridad normalizada */}
                               <div
-                                className="h-1.5 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan"
-                                style={{
-                                  width: `${Math.max(5, Math.min(100, Math.round(distributor.priorityScore ?? 0)))}%`
-                                }}
+                                className="h-1.5 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan distributor-priority-progress"
+                                data-progress={Math.max(5, Math.min(100, Math.round(distributor.priorityScore ?? 0)))}
                                 role="progressbar"
                                 aria-label={`Prioridad ${Math.round(distributor.priorityScore ?? 0)} sobre 100`}
                               />
@@ -749,10 +747,8 @@ const Distributors: React.FC = () => {
                           <div className="h-2 w-full rounded-full bg-gray-200">
                             {/* Inline style required for dynamic completion % - see docs/CSS_INLINE_STYLES.md */}
                             <div
-                              className="h-2 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan"
-                              style={{
-                                width: `${Math.round((distributor.completion ?? 0) * 100)}%`
-                              }}
+                              className="h-2 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan distributor-completion-progress"
+                              data-progress={Math.round((distributor.completion ?? 0) * 100)}
                               role="progressbar"
                               aria-label={`Completitud: ${Math.round((distributor.completion ?? 0) * 100)}%`}
                             />

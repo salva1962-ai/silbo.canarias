@@ -9,7 +9,7 @@ import {
   ExclamationTriangleIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline'
-import type { ImportResult } from '../utils/excel'
+import type { ImportResult } from '../lib/utils/excel'
 
 interface ImportExportMenuProps<T = unknown> {
   type: 'distributors' | 'candidates'

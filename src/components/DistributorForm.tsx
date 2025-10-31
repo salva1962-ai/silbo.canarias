@@ -6,7 +6,7 @@ import {
   spanishMobilePattern,
   taxIdPattern
 } from '../lib/data/patterns'
-import { sanitisePhone } from '../lib/data/helpers'
+import { sanitisePhone } from '../lib/utils/helpers'
 import {
   getSuggestedBrands,
   detectBrandPolicyByCode,

@@ -254,7 +254,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
             onChange={(e) => updateField('taxId', e.target.value.toUpperCase())}
             className={`rounded-2xl border px-4 py-2.5 text-sm shadow-inner focus:border-pastel-indigo focus:ring-2 focus:ring-pastel-indigo/40 ${errors.taxId ? 'border-pastel-red/60' : 'border-gray-200 dark:border-gray-600'}`}
             placeholder="Ej. B12345678 o 12345678Z"
-            aria-invalid={Boolean(errors.taxId)}
+            aria-invalid={!!errors.taxId}
             aria-describedby={errors.taxId ? 'taxid-error' : undefined}
           />
           {errors.taxId && (
@@ -281,7 +281,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
                 : 'border-gray-200 dark:border-gray-600'
             }`}
             placeholder="Ej. Tienda Express Canarias"
-            aria-invalid={Boolean(errors.name)}
+            aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'name-error' : undefined}
           />
           {errors.name && (
@@ -309,7 +309,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
                 : 'border-gray-200 dark:border-gray-600'
             }`}
             placeholder="Ej. San Cristóbal de La Laguna"
-            aria-invalid={Boolean(errors.city)}
+            aria-invalid={!!errors.city}
             aria-describedby={errors.city ? 'city-error' : undefined}
           />
           {errors.city && (
@@ -355,7 +355,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
                 : 'border-gray-200 dark:border-gray-600'
             }`}
             placeholder="Ej. LWMY-NEW-08"
-            aria-invalid={Boolean(errors.channelCode)}
+            aria-invalid={!!errors.channelCode}
             aria-describedby={errors.channelCode ? 'channel-code-error' : undefined}
           />
           {errors.channelCode && (
@@ -427,7 +427,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
                   : 'border-gray-200 dark:border-gray-600'
               }`}
               placeholder="Ej. Laura Hernández"
-              aria-invalid={Boolean(errors.contactName)}
+              aria-invalid={!!errors.contactName}
               aria-describedby={errors.contactName ? 'contact-name-error' : undefined}
             />
             {errors.contactName && (
@@ -455,7 +455,7 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
                   : 'border-gray-200 dark:border-gray-600'
               }`}
               placeholder="Ej. 600 123 456"
-              aria-invalid={Boolean(errors.contactPhone)}
+              aria-invalid={!!errors.contactPhone}
               aria-describedby={errors.contactPhone ? 'contact-phone-error' : undefined}
             />
             {errors.contactPhone && (

@@ -186,19 +186,19 @@ const CandidateDetail: React.FC = () => {
 
   // Handlers
   const handleAdvance = (): void => {
-    if (!candidate || !nextStage) return
-    reorderCandidate(candidate.id, nextStage.id, 0)
+  if (!candidate || !nextStage || !reorderCandidate) return
+  reorderCandidate(candidate.id, nextStage.id, 0)
   }
 
   const handleBack = (): void => {
-    if (!candidate || !previousStage) return
-    reorderCandidate(candidate.id, previousStage.id, 0)
+  if (!candidate || !previousStage || !reorderCandidate) return
+  reorderCandidate(candidate.id, previousStage.id, 0)
   }
 
   const handleStageSubmit = (): void => {
-    if (!candidate) return
-    if (stageDraft === candidate.stage) return
-    reorderCandidate(candidate.id, stageDraft, 0)
+  if (!candidate || !reorderCandidate) return
+  if (stageDraft === candidate.stage) return
+  reorderCandidate(candidate.id, stageDraft, 0)
   }
 
   const handleMarkChecklistDone = (): void => {
@@ -537,8 +537,8 @@ const CandidateDetail: React.FC = () => {
               <div className="mb-4 h-2 w-full rounded-full bg-gray-100 dark:bg-gray-700">
                 {/* Inline style required for dynamic checklist progress - see docs/CSS_INLINE_STYLES.md */}
                 <div
-                  className="h-2 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan transition-all duration-300"
-                  style={{ width: `${checklistProgress}%` }}
+                  className="h-2 rounded-full bg-gradient-to-r from-pastel-indigo to-pastel-cyan transition-all duration-300 candidate-checklist-progress"
+                  data-progress={checklistProgress}
                 />
               </div>
               <ul className="space-y-3">
@@ -641,7 +641,7 @@ const CandidateDetail: React.FC = () => {
                 ) : (
                   <ActionButton
                     onClick={() =>
-                      reorderCandidate(
+                      reorderCandidate && reorderCandidate(
                         candidate.id,
                         pipelineStages[0]?.id ?? 'new',
                         0

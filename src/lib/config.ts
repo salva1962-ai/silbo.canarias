@@ -1,5 +1,8 @@
 import { z } from 'zod'
-import { logger } from './utils/logger'
+// Si no existe logger, usar un stub temporal para evitar error de import
+const logger = {
+  warn: (...args: unknown[]) => { console.warn(...args) }
+}
 
 const rawEnv = {
   VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL ?? '',

@@ -13,7 +13,7 @@ import {
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAppData } from '../lib/useAppData'
-import { getWeeklyBounds, inWeek } from '../utils/kpis'
+import { getWeeklyBounds, inWeek } from '../lib/utils/kpis'
 import {
   Distributor,
   Candidate,
