@@ -6,6 +6,13 @@ import { useCandidates } from './hooks/useCandidates';
 import { useVisits } from './hooks/useVisits';
 import { useSales } from './hooks/useSales';
 import type { AppContextType, User, Preferences, EntityId, Notification, LookupOption, PipelineStage, CallCenterSummary, StatsSummary } from './types';
+import {
+  brandOptions,
+  channelOptions,
+  statusOptions,
+  provinceOptions,
+  pipelineStages
+} from './data/config';
 
 // Valores por defecto mínimos para evitar errores de tipado
 const emptyUser: User = {
@@ -22,8 +29,6 @@ const emptyCallCenter: CallCenterSummary = {
   helpers: { nextCandidateStage: () => null, previousCandidateStage: () => null }
 };
 const emptyLookups = { brands: {}, channels: {}, statuses: {}, stages: {} };
-const emptyPipelineStages: PipelineStage[] = [];
-const emptyOptions: LookupOption[] = [];
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const sync = useSyncQueue();
@@ -42,24 +47,24 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     candidates,
     visits,
     sales,
-    lookups: emptyLookups,
+    lookups: emptyLookups, // Si tienes lookups reales, reemplaza aquí
     formatters: {
       daysDifference: () => 0,
       formatRelativeTime: () => '',
       relative: () => ''
     },
     taxonomy: {
-      rules: {},
+      rules: [],
       resolveCategory: () => ({
         id: '', label: '', description: '', badgeClass: '', tooltip: '', brandPolicy: { allowed: null, blocked: [], conditional: [], note: '' }, pendingData: false
       }),
       deriveBrandsForChannel: () => []
     },
-    pipelineStages: emptyPipelineStages,
-    brandOptions: emptyOptions,
-    channelOptions: emptyOptions,
-    statusOptions: emptyOptions,
-    provinceOptions: emptyOptions,
+    pipelineStages,
+    brandOptions,
+    channelOptions,
+    statusOptions,
+    provinceOptions,
     stats: emptyStats,
     callCenter: emptyCallCenter,
     validators: {},
