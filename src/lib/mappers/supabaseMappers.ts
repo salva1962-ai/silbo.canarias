@@ -49,12 +49,22 @@ export function processCandidateFromSupabase(dbData: Record<string, unknown>): C
     notes?: string;
   };
   const safeData: DBCandidate = dbData as DBCandidate;
+  // Asegura que contact siempre sea un objeto Contact válido
+  let contact: Candidate['contact'] = { name: '', phone: '', email: '' };
+  if (typeof safeData.contact === 'object' && safeData.contact !== null) {
+    const c: Partial<Candidate['contact']> = (safeData.contact as Partial<Candidate['contact']>) ?? {};
+    contact = {
+      name: typeof c.name === 'string' ? c.name : '',
+      phone: typeof c.phone === 'string' ? c.phone : '',
+      email: typeof c.email === 'string' ? c.email : ''
+    };
+  }
   return {
     ...safeData,
     taxId: safeData.taxId || '',
     city: safeData.city || '',
     island: safeData.island || '',
-    contact: safeData.contact || '',
+    contact,
     notes: safeData.notes || '',
   }
 }
