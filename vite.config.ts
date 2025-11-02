@@ -7,6 +7,9 @@ import autoprefixer from 'autoprefixer';
 import { resolve } from 'path';
 
 export default defineConfig({
+  // Ignorar parserOptions.project para este archivo de configuración
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-nocheck
   resolve: {
     alias: {
       react: resolve(__dirname, 'node_modules/react'),

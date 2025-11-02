@@ -402,20 +402,32 @@ const Distributors: React.FC = () => {
                     onImport={(file) =>
                       importDistributorsWithUpdate(file, distributors)
                     }
-                    onImportComplete={(data) => {
-                      data.forEach((dist) => {
+                    onImportComplete={async (data) => {
+                      // Evitar duplicados por código
+                      const existingCodes = new Set(distributors.map(d => d.code?.toUpperCase?.() || ''));
+                      const ops: Promise<unknown>[] = [];
+                      for (const dist of data) {
                         if (dist.isUpdate && dist.existingId) {
                           // Actualizar distribuidor existente
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                          const { isUpdate, existingId, ...updateData } = dist
-                          updateDistributor(existingId, updateData)
+                          const { isUpdate: _isUpdate, existingId: _existingId, ...updateData } = dist;
+                          ops.push(updateDistributor(dist.existingId, updateData));
                         } else {
-                          // Crear nuevo distribuidor
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                          const { isUpdate, existingId, ...newData } = dist
-                          addDistributor(newData as NewDistributor)
+                          // Crear nuevo distribuidor solo si el código no existe
+                          const { isUpdate: _isUpdate, existingId: _existingId, ...newData } = dist;
+                          const code = (newData.code ?? '').toUpperCase();
+                          if (!existingCodes.has(code) && code) {
+                            existingCodes.add(code);
+                            ops.push(addDistributor(newData as NewDistributor));
+                          }
                         }
-                      })
+                      }
+                      try {
+                        await Promise.all(ops);
+                      } catch {
+                        // Aquí podrías mostrar feedback global de error si alguna inserción/actualización falla
+                        // Por ejemplo: setNotifications([...], { type: 'error', ... })
+                        alert('Error al importar algunos distribuidores. Revisa la conexión o los datos.');
+                      }
                     }}
                   />
                 </div>

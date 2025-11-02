@@ -2,7 +2,7 @@
 import type { Distributor, Candidate, Visit } from '../types'
 
 export function prepareDistributorForSupabase(distributor: Distributor) {
-  const { priorityScore, priorityLevel, priorityDrivers, ...dbData } = distributor
+  const { priorityScore: __PRIORITY_SCORE, priorityLevel: __PRIORITY_LEVEL, priorityDrivers: __PRIORITY_DRIVERS, ...dbData } = distributor
   return {
     ...dbData,
     brands: JSON.stringify(dbData.brands || []),
@@ -11,14 +11,18 @@ export function prepareDistributorForSupabase(distributor: Distributor) {
   }
 }
 
-export function processDistributorFromSupabase(dbData: any): Distributor {
-  // ...implementación igual que en DataContext...
-  // Debes importar calculateDistributorPriority y createDefaultPriorityDrivers
+export function processDistributorFromSupabase(dbData: Record<string, unknown>): Distributor {
+  type DBData = Omit<Distributor, 'brands' | 'checklist' | 'category' | 'priorityScore' | 'priorityLevel' | 'priorityDrivers'> & {
+    brands?: string | string[];
+    checklist?: string | Record<string, unknown>;
+    category?: string | Record<string, unknown>;
+  };
+  const safeData: DBData = dbData as DBData;
   return {
-    ...dbData,
-    brands: typeof dbData.brands === 'string' ? JSON.parse(dbData.brands) : (dbData.brands || []),
-    checklist: typeof dbData.checklist === 'string' ? JSON.parse(dbData.checklist) : (dbData.checklist || {}),
-    category: typeof dbData.category === 'string' ? JSON.parse(dbData.category) : (dbData.category || {}),
+    ...safeData,
+    brands: typeof safeData.brands === 'string' ? JSON.parse(safeData.brands) : (safeData.brands || []),
+    checklist: typeof safeData.checklist === 'string' ? JSON.parse(safeData.checklist) : (safeData.checklist || {}),
+    category: typeof safeData.category === 'string' ? JSON.parse(safeData.category) : (safeData.category || {}),
     priorityScore: 0,
     priorityLevel: 'medium',
     priorityDrivers: { traffic: 0, sales: 0, dataQuality: 0, salesLast90Days: 0, lastSaleDays: null, lastVisitDays: null, updatedAt: '' }
@@ -36,14 +40,22 @@ export function prepareCandidateForSupabase(candidate: Candidate) {
   }
 }
 
-export function processCandidateFromSupabase(dbData: any): Candidate {
+export function processCandidateFromSupabase(dbData: Record<string, unknown>): Candidate {
+  type DBCandidate = Omit<Candidate, 'taxId' | 'city' | 'island' | 'contact' | 'notes'> & {
+    taxId?: string;
+    city?: string;
+    island?: string;
+    contact?: string;
+    notes?: string;
+  };
+  const safeData: DBCandidate = dbData as DBCandidate;
   return {
-    ...dbData,
-    taxId: dbData.taxId || '',
-    city: dbData.city || '',
-    island: dbData.island || '',
-    contact: dbData.contact || '',
-    notes: dbData.notes || '',
+    ...safeData,
+    taxId: safeData.taxId || '',
+    city: safeData.city || '',
+    island: safeData.island || '',
+    contact: safeData.contact || '',
+    notes: safeData.notes || '',
   }
 }
 
@@ -54,9 +66,11 @@ export function prepareVisitForSupabase(visit: Visit) {
   }
 }
 
-export function processVisitFromSupabase(dbData: any): Visit {
+export function processVisitFromSupabase(dbData: Record<string, unknown>): Visit {
+  type DBVisit = Omit<Visit, 'reminder'> & { reminder?: string | Record<string, unknown> };
+  const safeData: DBVisit = dbData as DBVisit;
   return {
-    ...dbData,
-    reminder: typeof dbData.reminder === 'string' ? JSON.parse(dbData.reminder) : (dbData.reminder || {}),
+    ...safeData,
+    reminder: typeof safeData.reminder === 'string' ? JSON.parse(safeData.reminder) : (safeData.reminder || {}),
   }
 }

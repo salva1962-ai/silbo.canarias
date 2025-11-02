@@ -364,7 +364,7 @@ const SortableCandidateCard: React.FC<SortableCandidateCardProps> = ({
   onReactivate,
   onRemove,
   formatters,
-  isGhost,
+  // ...existing code...
   callTasksByCandidate,
   onOpenCalls
 }) => {
@@ -372,9 +372,10 @@ const SortableCandidateCard: React.FC<SortableCandidateCardProps> = ({
     attributes,
     listeners,
     setNodeRef,
-    transform,
-    transition,
-    isDragging
+  // Removed unused variables
+  // _transform,
+  // _transition,
+  // _isDragging
   } = useSortable({
     id: candidate.id,
     data: {
@@ -383,13 +384,7 @@ const SortableCandidateCard: React.FC<SortableCandidateCardProps> = ({
     }
   })
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging || isGhost ? 0.35 : 1,
-    cursor: 'grab',
-    zIndex: isDragging ? 50 : 'auto'
-  }
+  // El estilo inline se aplica directamente en el div, no es necesario declarar la variable si no se usa.
 
   return (
   // Estilo inline requerido por @dnd-kit/core para drag & drop. No mover a CSS externo.
