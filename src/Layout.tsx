@@ -1,5 +1,6 @@
 import React from 'react'
 import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from './lib/hooks/useAuth'
 import ThemeToggle from './components/ui/ThemeToggle'
 import {
   HomeIcon,
@@ -134,9 +135,9 @@ const Layout: React.FC = () => {
   }, [userMenuOpen])
 
   // Acción cerrar sesión
-  const { setCurrentUser } = useAppData()
-  const handleLogout = () => {
-    if (setCurrentUser) setCurrentUser('')
+  const { signOut } = useAuth()
+  const handleLogout = async () => {
+    await signOut()
     setUserMenuOpen(false)
     navigate('/login')
   }
@@ -162,17 +163,15 @@ const Layout: React.FC = () => {
   const location = useLocation()
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false)
 
-  // Usuario real del contexto
-  const { currentUser } = useAppData()
-  const user = currentUser
+  // Usuario real del contexto de autenticación
+  const { authUser } = useAuth()
+  const user = authUser
     ? {
-        name: currentUser.fullName || currentUser.email || 'Usuario',
-        role: currentUser.role || 'Sin rol',
-        initials:
-          currentUser.avatarInitials ||
-          (currentUser.fullName
-            ? currentUser.fullName.slice(0, 2).toUpperCase()
-            : 'US')
+        name: authUser.fullName || authUser.email || 'Usuario',
+        role: authUser.role || 'Sin rol',
+        initials: authUser.fullName
+          ? authUser.fullName.slice(0, 2).toUpperCase()
+          : authUser.email.slice(0, 2).toUpperCase()
       }
     : {
         name: 'Sin usuario',
@@ -338,11 +337,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { setCurrentUser, stats, sales } = useAppData()
+  const { stats, sales } = useAppData()
+  const { signOut } = useAuth()
 
-  // Para logout seguro, pasamos un valor especial (por ejemplo, '') como EntityId inválido
-  const handleLogout = (): void => {
-    if (setCurrentUser) setCurrentUser('')
+  // Para logout seguro
+  const handleLogout = async (): Promise<void> => {
+    await signOut()
     navigate('/login')
   }
 
