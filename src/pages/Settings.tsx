@@ -106,7 +106,7 @@ const Toggle: React.FC<ToggleProps> = ({
               : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
           }`}
           aria-label={`${label}: ${active ? onLabel : offLabel}`}
-          aria-pressed={active ? "true" : "false"}
+          aria-pressed={Boolean(active)}
         >
           <span
             className={`absolute left-1 top-1 inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow transition-transform duration-300 ${
@@ -221,7 +221,7 @@ const Settings: React.FC = () => {
                     ${colorScheme === key 
                       ? 'border-pastel-indigo bg-pastel-indigo/10 scale-105' 
                       : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-pastel-indigo/50'}`}
-                  aria-pressed={colorScheme === key ? "true" : "false"}
+                  aria-pressed={Boolean(colorScheme === key)}
                   aria-label={`Seleccionar esquema de color ${scheme.name}`}
                 >
                   <span className={`w-8 h-8 rounded-full mb-2 border-2 flex items-center justify-center transition-all duration-300 bg-gradient-to-r ${getSchemeGradient(key)}
@@ -291,7 +291,7 @@ const Settings: React.FC = () => {
                   }`}
                   placeholder="dpd@silbocanarias.com"
                   aria-label="Correo electrónico de privacidad"
-                  aria-invalid={emailError ? "true" : "false"}
+                  aria-invalid={Boolean(emailError)}
                   aria-describedby={emailError ? 'email-error' : 'email-help'}
                 />
                 {emailError && (
